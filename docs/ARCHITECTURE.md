@@ -1,0 +1,56 @@
+# ZeroHour — Architecture Notes
+
+## Startup: who creates whom
+
+1. The engine opens `Lvl_FirstPerson` — Editor Startup Map and Game Default Map in
+   *Project Settings → Maps & Modes* (`Config/DefaultEngine.ini`).
+2. The level runs `BP_FirstPersonGameMode` — the project-wide default (`GlobalDefaultGameMode`)
+   and the map's own GameMode override.
+3. The GameMode spawns the PlayerController (`BP_FirstPersonPlayerController`) and the default pawn
+   (`BP_FirstPersonCharacter`), then the controller possesses the pawn.
+4. Input is wired in two places:
+   - the **controller** adds Input Mapping Contexts to the local player's
+     `UEnhancedInputLocalPlayerSubsystem` in `AZeroHourPlayerController::SetupInputComponent`
+     (`IMC_Default` always, `IMC_MouseLook` on desktop only);
+   - the **character** binds actions in `AZeroHourCharacter::SetupPlayerInputComponent`
+     (`IA_Move`, `IA_Look`, `IA_MouseLook`, `IA_Jump`).
+5. The controller's constructor sets `PlayerCameraManagerClass = AZeroHourCameraManager`
+   (pitch clamped to −70…80°). On mobile, `BeginPlay` also spawns the touch-controls widget.
+
+## Classes: C++ base → Blueprint
+
+Every gameplay class is an abstract C++ base with a Blueprint subclass that holds assets and tuning.
+
+| C++ (`Source/ZeroHour`) | Blueprint (`Content/FirstPerson/Blueprints`) | Responsibility | Configured where |
+| --- | --- | --- | --- |
+| `AZeroHourGameMode` (empty) | `BP_FirstPersonGameMode` | Which pawn and controller to spawn | BP Class Defaults: *Default Pawn Class*, *Player Controller Class* |
+| `AZeroHourPlayerController` | `BP_FirstPersonPlayerController` | Mapping contexts, camera manager, touch UI | BP: `DefaultMappingContexts`, `MobileExcludedMappingContexts`, `MobileControlsWidgetClass` |
+| `AZeroHourCharacter` | `BP_FirstPersonCharacter` | Movement, first-person camera and arms, input bindings | C++ constructor: components, capsule, first-person FOV/scale, movement defaults. BP: meshes (`SKM_Manny_Simple`), anim blueprints (`ABP_FP_Copy`, `ABP_Unarmed`), input actions |
+| `AZeroHourCameraManager` | — | View pitch limits | C++ constructor |
+
+Character components (created in the constructor):
+
+- `FirstPersonMesh` — arms, attached to the body mesh, visible only to the owner;
+- `FirstPersonCameraComponent` — attached to the arms' `head` socket, follows control rotation;
+- body mesh (`GetMesh()`) — hidden from the owner, kept as the world-space representation.
+
+## Module and config
+
+- Runtime module `ZeroHour`; dependencies in `ZeroHour.Build.cs`: Core, CoreUObject, Engine, InputCore,
+  EnhancedInput, AIModule, UMG, Slate.
+- Plugins (`ZeroHour.uproject`): ModelingToolsEditorMode (editor only).
+- Log category `LogZeroHour` — `ZeroHour.h` / `ZeroHour.cpp`.
+- Enhanced Input is the default input system (`Config/DefaultInput.ini`); console key `~`.
+
+## Template variants
+
+The First Person C++ template ships with sample variants (`Variant_Shooter`, `Variant_Horror`). They were
+removed so that all gameplay code in this repository is ZeroHour's own; the originals remain in the initial
+commit. Shared template content (`Characters/`, `Weapons/`, `LevelPrototyping/`) is kept as placeholder art.
+
+## Where ZeroHour code plugs in
+
+- `AZhPlayerCharacter : AZeroHourCharacter` — `BP_FirstPersonCharacter` is reparented to it.
+- `AZhPlayerController : AZeroHourPlayerController` — sets the cheat manager; `BP_FirstPersonPlayerController`
+  is reparented to it.
+- New input actions go into `IMC_Default`.

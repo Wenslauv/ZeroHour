@@ -15,8 +15,6 @@ public class ZeroHour : ModuleRules
 			"InputCore",
 			"EnhancedInput",
 			"AIModule",
-			"StateTreeModule",
-			"GameplayStateTreeModule",
 			"UMG",
 			"Slate"
 		});
@@ -24,13 +22,7 @@ public class ZeroHour : ModuleRules
 		PrivateDependencyModuleNames.AddRange(new string[] { });
 
 		PublicIncludePaths.AddRange(new string[] {
-			"ZeroHour",
-			"ZeroHour/Variant_Horror",
-			"ZeroHour/Variant_Horror/UI",
-			"ZeroHour/Variant_Shooter",
-			"ZeroHour/Variant_Shooter/AI",
-			"ZeroHour/Variant_Shooter/UI",
-			"ZeroHour/Variant_Shooter/Weapons"
+			"ZeroHour"
 		});
 
 		// Uncomment if you are using Slate UI
