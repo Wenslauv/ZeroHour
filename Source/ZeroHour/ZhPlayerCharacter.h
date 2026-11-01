@@ -1,14 +1,14 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "ZeroHourCharacter.h"
 #include "ZhPlayerCharacter.generated.h"
 
-
 class UInputAction;
 
+/**
+ * Player character: arena-shooter movement tuning and combat input on top of the template character.
+ */
 UCLASS()
 class ZEROHOUR_API AZhPlayerCharacter : public AZeroHourCharacter
 {

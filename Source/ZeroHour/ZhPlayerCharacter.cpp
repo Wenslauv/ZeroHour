@@ -1,11 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "ZhPlayerCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "ZeroHour.h"
-
 
 AZhPlayerCharacter::AZhPlayerCharacter()
 {
@@ -18,7 +14,6 @@ AZhPlayerCharacter::AZhPlayerCharacter()
 	Movement->JumpZVelocity = 900.f;
 	Movement->GetNavAgentPropertiesRef().bCanCrouch = false;
 }
-
 
 void AZhPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {

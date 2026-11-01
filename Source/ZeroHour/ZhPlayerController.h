@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -7,7 +5,7 @@
 #include "ZhPlayerController.generated.h"
 
 /**
- * 
+ * Player controller: adds the ZeroHour cheat manager on top of the template controller.
  */
 UCLASS()
 class ZEROHOUR_API AZhPlayerController : public AZeroHourPlayerController
